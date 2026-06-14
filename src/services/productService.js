@@ -1,0 +1,134 @@
+import { supabase } from '../supabase/client';
+
+// Helper to extract storage path (file name) from public image URL
+const getStoragePathFromUrl = (url) => {
+  if (!url) return null;
+  const parts = url.split('/product-images/');
+  return parts.length > 1 ? decodeURIComponent(parts[1]) : null;
+};
+
+export const productService = {
+  // Fetch all products ordered by display_order ascending
+  async getProducts() {
+    const { data, error } = await supabase
+      .from('products')
+      .select('*')
+      .order('display_order', { ascending: true })
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    return data || [];
+  },
+
+  // Add a new product (handles image upload and automatically sets display_order)
+  async addProduct(name, imageFile) {
+    if (!name || !imageFile) {
+      throw new Error('Product name and image file are required.');
+    }
+
+    // 1. Upload image file to Supabase Storage bucket 'product-images'
+    const fileExt = imageFile.name.split('.').pop();
+    const fileName = `${Date.now()}-${Math.random().toString(36).substring(2, 15)}.${fileExt}`;
+    const filePath = fileName;
+
+    const { error: uploadError, data: uploadData } = await supabase.storage
+      .from('product-images')
+      .upload(filePath, imageFile, {
+        cacheControl: '3600',
+        upsert: false,
+      });
+
+    if (uploadError) throw uploadError;
+
+    // 2. Retrieve the public URL
+    const { data: { publicUrl } } = supabase.storage
+      .from('product-images')
+      .getPublicUrl(filePath);
+
+    // 3. Get next display_order (max current display_order + 1)
+    const { data: existingProducts, error: fetchError } = await supabase
+      .from('products')
+      .select('display_order')
+      .order('display_order', { ascending: false })
+      .limit(1);
+
+    if (fetchError) throw fetchError;
+    
+    const nextOrder = existingProducts && existingProducts.length > 0 
+      ? (existingProducts[0].display_order || 0) + 1 
+      : 0;
+
+    // 4. Insert database row
+    const { data: newProduct, error: insertError } = await supabase
+      .from('products')
+      .insert([
+        {
+          name,
+          image_url: publicUrl,
+          display_order: nextOrder,
+        },
+      ])
+      .select();
+
+    if (insertError) {
+      // Cleanup uploaded image if database insert fails
+      await supabase.storage.from('product-images').remove([filePath]);
+      throw insertError;
+    }
+
+    return newProduct[0];
+  },
+
+  // Update a product's name
+  async updateProductName(id, newName) {
+    const { data, error } = await supabase
+      .from('products')
+      .update({ name: newName })
+      .eq('id', id)
+      .select();
+
+    if (error) throw error;
+    return data[0];
+  },
+
+  // Delete a product (deletes both DB row and storage image)
+  async deleteProduct(id, imageUrl) {
+    // 1. Delete image from Storage
+    const storagePath = getStoragePathFromUrl(imageUrl);
+    if (storagePath) {
+      const { error: storageError } = await supabase.storage
+        .from('product-images')
+        .remove([storagePath]);
+      if (storageError) {
+        console.warn('Failed to delete image from storage:', storageError.message);
+      }
+    }
+
+    // 2. Delete product from database
+    const { error: dbError } = await supabase
+      .from('products')
+      .delete()
+      .eq('id', id);
+
+    if (dbError) throw dbError;
+    return true;
+  },
+
+  // Save the updated reordered products
+  async reorderProducts(products) {
+    // Create payload with only id and display_order
+    const updates = products.map((product, index) => ({
+      id: product.id,
+      name: product.name,
+      image_url: product.image_url,
+      display_order: index,
+    }));
+
+    const { data, error } = await supabase
+      .from('products')
+      .upsert(updates, { onConflict: 'id' });
+
+    if (error) throw error;
+    return data;
+  },
+};
