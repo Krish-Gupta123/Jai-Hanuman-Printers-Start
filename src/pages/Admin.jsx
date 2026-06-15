@@ -641,7 +641,7 @@ export default function Admin() {
                     <span>Message Template</span>
                   </label>
                   <textarea
-                    rows={8}
+                    rows={4}
                     value={whatsappTemplate}
                     onChange={(e) => setWhatsappTemplate(e.target.value)}
                     placeholder="Message template text..."

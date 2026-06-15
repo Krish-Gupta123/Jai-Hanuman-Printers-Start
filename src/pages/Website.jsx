@@ -143,40 +143,7 @@ export default function Website() {
         )}
       </main>
 
-      {/* Contact / CTA Block */}
-      <section className="w-full max-w-7xl mx-auto px-4">
-        <div className="bg-white border border-gray-100 rounded-3xl py-6 px-6 mt-6">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div>
-              <h3 className="text-base font-bold text-gray-900">Contact Us</h3>
-              <p className="text-xs text-gray-500 mt-1 font-medium">
-                Call for fastest support
-              </p>
-            </div>
-            <a
-              href="tel:+919324595111"
-              className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-2xl transition-all shadow-md shadow-red-200 cursor-pointer text-sm"
-            >
-              +919324595111
-            </a>
-          </div>
-
-          <div className="mt-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div>
-              <h3 className="text-base font-bold text-gray-900">GPay</h3>
-              <p className="text-xs text-gray-500 mt-1 font-medium">
-                Quick payment option
-              </p>
-            </div>
-            <a
-              href="upi://pay?pa=sarafsantosha@okaxis&pn=Hashita%20Saraf&aid=uGICAgICr7qLbNg"
-              className="px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-900 font-semibold rounded-2xl transition-all border border-gray-200 cursor-pointer text-sm text-center"
-            >
-              Pay with GPay
-            </a>
-          </div>
-        </div>
-      </section>
+      {/* Contact / CTA Block removed — CTAs are now in shared 2x2 block above footer */}
 
       {/* Shared compact 2x2 buttons (centered) placed after listing and before footer */}
       <section className="w-full max-w-7xl mx-auto px-4 mt-6">
@@ -185,7 +152,7 @@ export default function Website() {
             <div className="grid grid-cols-2 gap-3">
               <a
                 href="tel:+919324595111"
-                className="flex items-center justify-center px-4 py-2 bg-red-600 text-white rounded-xl shadow-sm text-sm"
+                className="flex items-center justify-center px-4 py-2 bg-white border border-gray-200 text-gray-900 rounded-xl shadow-sm text-sm"
               >
                 Contact
               </a>
