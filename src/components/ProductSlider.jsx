@@ -46,10 +46,6 @@ export default function ProductSlider({ products, onOrder, onShare, isLoading })
       <Swiper
         modules={[Navigation, Pagination, EffectCreative, Autoplay]}
         grabCursor={true}
-        navigation={{
-          prevEl: '.swiper-prev-nav',
-          nextEl: '.swiper-next-nav',
-        }}
 
         effect={'creative'}
         creativeEffect={{
@@ -63,10 +59,7 @@ export default function ProductSlider({ products, onOrder, onShare, isLoading })
         }}
         initialSlide={startIndex}
         slidesPerView={1}
-        navigation={{
-          nextEl: '.swiper-button-next-custom',
-          prevEl: '.swiper-button-prev-custom',
-        }}
+        navigation={{ prevEl: '.swiper-prev-nav', nextEl: '.swiper-next-nav' }}
         pagination={{ clickable: true }}
         loop={products.length > 1}
         autoplay={{

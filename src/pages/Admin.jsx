@@ -33,6 +33,7 @@ export default function Admin() {
   const [newProductName, setNewProductName] = useState('');
   const [newProductImage, setNewProductImage] = useState(null);
   const [newProductDescription, setNewProductDescription] = useState('');
+  const [newProductWhatsapp, setNewProductWhatsapp] = useState('');
   const [addingProduct, setAddingProduct] = useState(false);
   const fileInputRef = useRef(null);
 
@@ -117,11 +118,12 @@ export default function Admin() {
     setAddingProduct(true);
     const uploadToast = toast.loading('Uploading product image and creating entry...');
     try {
-      await productService.addProduct(newProductName.trim(), newProductImage, newProductDescription);
+      await productService.addProduct(newProductName.trim(), newProductImage, newProductDescription, newProductWhatsapp);
       toast.success('Product added successfully', { id: uploadToast });
       setNewProductName('');
       setNewProductImage(null);
       setNewProductDescription('');
+      setNewProductWhatsapp('');
       if (fileInputRef.current) fileInputRef.current.value = '';
       fetchProducts();
     } catch (error) {
@@ -344,6 +346,19 @@ export default function Admin() {
                   value={newProductDescription}
                   onChange={(e) => setNewProductDescription(e.target.value)}
                   placeholder="Short description shown on website (optional)"
+                  className="block w-full px-3 py-2 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-red-600/20 focus:border-red-600 text-sm text-gray-900 bg-gray-50 resize-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
+                  WhatsApp Message (optional)
+                </label>
+                <textarea
+                  rows={3}
+                  value={newProductWhatsapp}
+                  onChange={(e) => setNewProductWhatsapp(e.target.value)}
+                  placeholder="Optional WhatsApp message for this product (editable later)"
                   className="block w-full px-3 py-2 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-red-600/20 focus:border-red-600 text-sm text-gray-900 bg-gray-50 resize-none"
                 />
               </div>

@@ -3,6 +3,7 @@ import { productService } from '../services/productService';
 import { settingsService } from '../services/settingsService';
 import ProductSlider from '../components/ProductSlider';
 import { Printer, Shield, Loader2 } from 'lucide-react';
+import logoImg from '../../images/logo.jpeg';
 import toast from 'react-hot-toast';
 
 export default function Website() {
@@ -98,7 +99,7 @@ export default function Website() {
           <div className="flex items-center gap-2 mb-1">
             <div className="p-0.5 rounded-lg flex items-center justify-center">
               <img
-                src="/images/logo.jpeg"
+                src={logoImg}
                 alt="Jai Hanuman Logo"
                 onError={(e) => { e.target.onerror = null; e.target.style.display = 'none'; }}
                 className="w-10 h-10 object-contain mr-2"
@@ -173,6 +174,45 @@ export default function Website() {
             >
               Pay with GPay
             </a>
+          </div>
+        </div>
+      </section>
+
+      {/* Shared compact 2x2 buttons (centered) placed after listing and before footer */}
+      <section className="w-full max-w-7xl mx-auto px-4 mt-6">
+        <div className="bg-white border border-gray-100 rounded-3xl py-6 px-6">
+          <div className="flex justify-center">
+            <div className="grid grid-cols-2 gap-3">
+              <a
+                href="tel:+919324595111"
+                className="flex items-center justify-center px-4 py-2 bg-red-600 text-white rounded-xl shadow-sm text-sm"
+              >
+                Contact
+              </a>
+
+              <a
+                href="upi://pay?pa=sarafsantosha@okaxis&pn=Hashita%20Saraf&aid=uGICAgICr7qLbNg"
+                className="flex items-center justify-center px-4 py-2 bg-gray-100 text-gray-900 rounded-xl shadow-sm text-sm"
+              >
+                GPay
+              </a>
+
+              <button
+                onClick={() => handleShare(null)}
+                className="flex items-center justify-center px-4 py-2 bg-gray-100 text-gray-900 rounded-xl shadow-sm text-sm"
+              >
+                Share
+              </button>
+
+              <a
+                href="https://jai-hanuman-printers.vercel.app/"
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center justify-center px-4 py-2 bg-gray-100 text-gray-900 rounded-xl shadow-sm text-sm"
+              >
+                Website
+              </a>
+            </div>
           </div>
         </div>
       </section>
