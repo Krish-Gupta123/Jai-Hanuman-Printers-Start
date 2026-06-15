@@ -18,15 +18,17 @@ import {
   ShoppingBag,
   FileText,
   Phone,
-  Link
+  Link,
+  MessageSquare
 } from 'lucide-react';
+
 import toast from 'react-hot-toast';
 
 export default function Admin() {
   // Products state
   const [products, setProducts] = useState([]);
   const [loadingProducts, setLoadingProducts] = useState(true);
-  
+
   // Add Product form state
   const [newProductName, setNewProductName] = useState('');
   const [newProductImage, setNewProductImage] = useState(null);
@@ -37,6 +39,16 @@ export default function Admin() {
   const [editingProductId, setEditingProductId] = useState(null);
   const [editingName, setEditingName] = useState('');
   const [savingEdit, setSavingEdit] = useState(false);
+
+  // Per-product WhatsApp / Description editing state
+  const [editingWhatsappId, setEditingWhatsappId] = useState(null);
+  const [editingWhatsappText, setEditingWhatsappText] = useState('');
+  const [savingWhatsappText, setSavingWhatsappText] = useState(false);
+
+  const [editingDescriptionId, setEditingDescriptionId] = useState(null);
+  const [editingDescriptionText, setEditingDescriptionText] = useState('');
+  const [savingDescriptionText, setSavingDescriptionText] = useState(false);
+
 
   // Settings state
   const [whatsappNumber, setWhatsappNumber] = useState('');
@@ -162,13 +174,55 @@ export default function Admin() {
     }
   };
 
+  const startEditWhatsappMessage = (product) => {
+    setEditingWhatsappId(product.id);
+    setEditingWhatsappText(product.whatsapp_message || '');
+  };
+
+  const saveWhatsappMessageEdit = async (id) => {
+    setSavingWhatsappText(true);
+    try {
+      await productService.updateProductWhatsAppMessage(id, editingWhatsappText);
+      toast.success('WhatsApp message saved');
+      setEditingWhatsappId(null);
+      fetchProducts();
+    } catch (error) {
+      console.error('Error updating whatsapp message:', error);
+      toast.error('Failed to update WhatsApp message');
+    } finally {
+      setSavingWhatsappText(false);
+    }
+  };
+
+  const startEditDescription = (product) => {
+    setEditingDescriptionId(product.id);
+    setEditingDescriptionText(product.product_description || '');
+  };
+
+  const saveDescriptionEdit = async (id) => {
+    setSavingDescriptionText(true);
+    try {
+      await productService.updateProductDescription(id, editingDescriptionText);
+      toast.success('Description saved');
+      setEditingDescriptionId(null);
+      fetchProducts();
+    } catch (error) {
+      console.error('Error updating description:', error);
+      toast.error('Failed to update description');
+    } finally {
+      setSavingDescriptionText(false);
+    }
+  };
+
+
   // Reorder products (Up/Down)
   const handleMove = async (index, direction) => {
     if (reordering) return;
-    
+
+
     const newProducts = [...products];
     const targetIndex = direction === 'up' ? index - 1 : index + 1;
-    
+
     // Check bounds
     if (targetIndex < 0 || targetIndex >= products.length) return;
 
@@ -239,10 +293,11 @@ export default function Admin() {
 
       {/* Main Dashboard Layout */}
       <main className="flex-grow max-w-7xl w-full mx-auto p-6 grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
+
         {/* Left Column: Manage Products (2/3 width on large screens) */}
         <div className="lg:col-span-2 space-y-8">
-          
+
+
           {/* Add Product Block */}
           <section className="bg-white rounded-3xl p-6 shadow-md border border-gray-100">
             <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
@@ -278,6 +333,9 @@ export default function Admin() {
                 </div>
               </div>
 
+              {/* Optional per-product description / message are intentionally editable after creation
+                  because current addProduct flow only accepts name + image. */}
+
               <div className="flex justify-end">
                 <button
                   type="submit"
@@ -299,6 +357,7 @@ export default function Admin() {
               </div>
             </form>
           </section>
+
 
           {/* Products List Block */}
           <section className="bg-white rounded-3xl p-6 shadow-md border border-gray-100">
@@ -402,7 +461,84 @@ export default function Admin() {
                           <Edit2 size={16} />
                         </button>
                       )}
-                      
+
+                      {/* Per-product WhatsApp message */}
+                      {editingWhatsappId !== product.id ? (
+                        <button
+                          onClick={() => startEditWhatsappMessage(product)}
+                          className="p-2 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-xl transition-all cursor-pointer"
+                          title="Edit WhatsApp message (optional)"
+                        >
+                          <MessageSquare size={16} />
+                        </button>
+                      ) : (
+                        <div className="flex flex-col gap-2">
+                          <textarea
+                            rows={3}
+                            value={editingWhatsappText}
+                            onChange={(e) => setEditingWhatsappText(e.target.value)}
+                            placeholder="Optional WhatsApp message for this product"
+                            className="w-64 max-w-[70vw] px-3 py-2 border border-red-500/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 text-gray-900 bg-white text-sm resize-none"
+                          />
+                          <div className="flex items-center gap-1 justify-end">
+                            <button
+                              onClick={() => saveWhatsappMessageEdit(product.id)}
+                              disabled={savingWhatsappText}
+                              className="p-2 bg-red-600 hover:bg-red-700 text-white rounded-xl transition-all cursor-pointer disabled:opacity-50"
+                              title="Save WhatsApp message"
+                            >
+                              {savingWhatsappText ? <Loader2 size={16} className="animate-spin" /> : <Check size={16} />}
+                            </button>
+                            <button
+                              onClick={() => setEditingWhatsappId(null)}
+                              className="p-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl transition-all cursor-pointer"
+                              title="Cancel"
+                            >
+                              <X size={16} />
+                            </button>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Per-product description */}
+                      {editingDescriptionId !== product.id ? (
+                        <button
+                          onClick={() => startEditDescription(product)}
+                          className="p-2 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-xl transition-all cursor-pointer"
+                          title="Edit Description (optional)"
+                        >
+                          <FileText size={16} />
+                        </button>
+                      ) : (
+                        <div className="flex flex-col gap-2">
+                          <textarea
+                            rows={2}
+                            value={editingDescriptionText}
+                            onChange={(e) => setEditingDescriptionText(e.target.value)}
+                            placeholder="Optional product description (shown on website)"
+                            className="w-64 max-w-[70vw] px-3 py-2 border border-red-500/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-100 text-gray-900 bg-white text-sm resize-none"
+                          />
+                          <div className="flex items-center gap-1 justify-end">
+                            <button
+                              onClick={() => saveDescriptionEdit(product.id)}
+                              disabled={savingDescriptionText}
+                              className="p-2 bg-red-600 hover:bg-red-700 text-white rounded-xl transition-all cursor-pointer disabled:opacity-50"
+                              title="Save description"
+                            >
+                              {savingDescriptionText ? <Loader2 size={16} className="animate-spin" /> : <Check size={16} />}
+                            </button>
+                            <button
+                              onClick={() => setEditingDescriptionId(null)}
+                              className="p-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl transition-all cursor-pointer"
+                              title="Cancel"
+                            >
+                              <X size={16} />
+                            </button>
+                          </div>
+                        </div>
+                      )}
+
+
                       {/* Deep link copy button */}
                       <button
                         onClick={async () => {
@@ -424,6 +560,7 @@ export default function Admin() {
                         <Trash2 size={16} />
                       </button>
                     </div>
+
                   </div>
                 ))}
               </div>
@@ -508,7 +645,7 @@ export default function Admin() {
             )}
           </section>
         </div>
-        
+
       </main>
     </div>
   );

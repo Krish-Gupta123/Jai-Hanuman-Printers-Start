@@ -17,7 +17,7 @@ export default function ProductSlider({ products, onOrder, onShare, isLoading })
   const queryParams = new URLSearchParams(window.location.search);
   const deepLinkProductId = queryParams.get('product');
   let startIndex = 0;
-  
+
   if (deepLinkProductId && products.length > 0) {
     const index = products.findIndex((p) => p.id === deepLinkProductId);
     if (index !== -1) {
@@ -27,9 +27,30 @@ export default function ProductSlider({ products, onOrder, onShare, isLoading })
 
   return (
     <div className="w-full max-w-md mx-auto px-4 py-6 relative">
+      {/* Custom Navigation Buttons OUTSIDE card/image area */}
+      <button
+        type="button"
+        className="swiper-prev-nav absolute -left-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white border border-gray-200 text-gray-700 flex items-center justify-center shadow-sm hover:bg-gray-50"
+        aria-label="Previous slide"
+      >
+        <span className="text-xl leading-none">{'<'}</span>
+      </button>
+      <button
+        type="button"
+        className="swiper-next-nav absolute -right-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white border border-gray-200 text-gray-700 flex items-center justify-center shadow-sm hover:bg-gray-50"
+        aria-label="Next slide"
+      >
+        <span className="text-xl leading-none">{'>'}</span>
+      </button>
+
       <Swiper
         modules={[Navigation, Pagination, EffectCreative, Autoplay]}
         grabCursor={true}
+        navigation={{
+          prevEl: '.swiper-prev-nav',
+          nextEl: '.swiper-next-nav',
+        }}
+
         effect={'creative'}
         creativeEffect={{
           prev: {
@@ -42,7 +63,10 @@ export default function ProductSlider({ products, onOrder, onShare, isLoading })
         }}
         initialSlide={startIndex}
         slidesPerView={1}
-        navigation={true}
+        navigation={{
+          nextEl: '.swiper-button-next-custom',
+          prevEl: '.swiper-button-prev-custom',
+        }}
         pagination={{ clickable: true }}
         loop={products.length > 1}
         autoplay={{
@@ -52,8 +76,15 @@ export default function ProductSlider({ products, onOrder, onShare, isLoading })
         }}
         className="w-full"
       >
+        {/* Invisible buttons with proper class for Swiper */}
+        <div className="hidden">
+          <button type="button" className="swiper-button-prev-custom">{'<'}</button>
+          <button type="button" className="swiper-button-next-custom">{'>'}</button>
+        </div>
+
+
         {products.map((product) => (
-          <SwiperSlide key={product.id} className="pb-14 pt-2">
+          <SwiperSlide key={product.id} className="pt-2 pb-6">
             <ProductCard
               product={product}
               onOrder={onOrder}

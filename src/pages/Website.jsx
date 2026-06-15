@@ -33,13 +33,17 @@ export default function Website() {
     setIsOrdering(true);
     try {
       const settings = await settingsService.getSettings();
-      // Clean number (ensure no spaces, hyphens, or '+' signs, although wa.me supports numeric format)
       const cleanNumber = settings.whatsapp_number.trim().replace(/[+\s-]/g, '');
+
       const template = settings.whatsapp_message_template;
-      
-      // Replace {productName} placeholder
-      const generatedMessage = template.replace(/{productName}/g, product.name);
-      
+      const perProductMessage = (product.whatsapp_message || '').trim();
+
+      // If admin set custom message for this product, use it.
+      // Otherwise use global template with {productName}
+      const generatedMessage = perProductMessage
+        ? perProductMessage.replace(/{productName}/g, product.name)
+        : template.replace(/{productName}/g, product.name);
+
       const whatsappUrl = `https://wa.me/${cleanNumber}?text=${encodeURIComponent(generatedMessage)}`;
       window.open(whatsappUrl, '_blank');
     } catch (error) {
@@ -50,16 +54,22 @@ export default function Website() {
     }
   };
 
-  // Web Share / Clipboard Copy Handler
+  // Web Share (share website link / or product deep link)
   const handleShare = async (product) => {
-    // Generate deep-link to this product
-    const shareUrl = `${window.location.origin}/?product=${product.id}`;
-    
+    const shareUrl = product
+      ? `${window.location.origin}/?product=${product.id}`
+      : `${window.location.origin}/`;
+
+    const shareTitle = product ? product.name : 'Jai Hanuman Printer';
+    const shareText = product
+      ? `Check out ${product.name} at Jai Hanuman Printer!`
+      : 'Jai Hanuman Printer';
+
     if (navigator.share) {
       try {
         await navigator.share({
-          title: product.name,
-          text: `Check out ${product.name} at Jai Hanuman Printer!`,
+          title: shareTitle,
+          text: shareText,
           url: shareUrl,
         });
       } catch (err) {
@@ -69,7 +79,6 @@ export default function Website() {
         }
       }
     } else {
-      // Desktop fallback: copy to clipboard
       try {
         await navigator.clipboard.writeText(shareUrl);
         toast.success('Link Copied');
@@ -79,6 +88,7 @@ export default function Website() {
       }
     }
   };
+
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 text-gray-900">
@@ -124,12 +134,59 @@ export default function Website() {
         )}
       </main>
 
+      {/* Contact / CTA Block */}
+      <section className="w-full max-w-7xl mx-auto px-4">
+        <div className="bg-white border border-gray-100 rounded-3xl py-6 px-6 mt-6">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <h3 className="text-base font-bold text-gray-900">Contact Us</h3>
+              <p className="text-xs text-gray-500 mt-1 font-medium">
+                Call for fastest support
+              </p>
+            </div>
+            <a
+              href="tel:+919324595111"
+              className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-2xl transition-all shadow-md shadow-red-200 cursor-pointer text-sm"
+            >
+              +919324595111
+            </a>
+          </div>
+
+          <div className="mt-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <h3 className="text-base font-bold text-gray-900">GPay</h3>
+              <p className="text-xs text-gray-500 mt-1 font-medium">
+                Quick payment option
+              </p>
+            </div>
+            <a
+              href="upi://pay?pa=sarafsantosha@okaxis&pn=Hashita%20Saraf&aid=uGICAgICr7qLbNg"
+              className="px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-900 font-semibold rounded-2xl transition-all border border-gray-200 cursor-pointer text-sm text-center"
+            >
+              Pay with GPay
+            </a>
+          </div>
+        </div>
+      </section>
+
       {/* Footer Block */}
       <footer className="w-full bg-white border-t border-gray-100 py-6 px-4 text-center">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-gray-400 font-medium">
+          <div className="text-xs text-gray-400 font-medium">
             © {new Date().getFullYear()} Jai Hanuman Printer. All rights reserved.
-          </p>
+            <div className="mt-1">
+              Made by{' '}
+              <a
+                href="https://wa.me/8080473728"
+                target="_blank"
+                rel="noreferrer"
+                className="text-red-600 hover:text-red-700 font-semibold"
+              >
+                Krish Gupta
+              </a>
+            </div>
+          </div>
+
           <a
             href="/admin"
             className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-red-600 transition-colors font-semibold"
@@ -139,6 +196,19 @@ export default function Website() {
           </a>
         </div>
       </footer>
+
+      {/* Sticky WhatsApp Button (bottom-right) */}
+      <a
+        href="https://wa.me/9324595111"
+        target="_blank"
+        rel="noreferrer"
+        className="fixed bottom-20 right-5 z-50 px-4 py-3 rounded-full bg-green-600 hover:bg-green-700 text-white shadow-lg shadow-green-200 transition-all cursor-pointer text-sm flex items-center gap-2"
+        aria-label="Chat on WhatsApp"
+      >
+        WhatsApp
+      </a>
+
     </div>
   );
 }
+

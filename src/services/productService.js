@@ -53,9 +53,9 @@ export const productService = {
       .limit(1);
 
     if (fetchError) throw fetchError;
-    
-    const nextOrder = existingProducts && existingProducts.length > 0 
-      ? (existingProducts[0].display_order || 0) + 1 
+
+    const nextOrder = existingProducts && existingProducts.length > 0
+      ? (existingProducts[0].display_order || 0) + 1
       : 0;
 
     // 4. Insert database row
@@ -91,7 +91,36 @@ export const productService = {
     return data[0];
   },
 
+  // Update optional per-product WhatsApp message
+  async updateProductWhatsAppMessage(id, whatsappMessage) {
+    const { data, error } = await supabase
+      .from('products')
+      .update({
+        whatsapp_message: whatsappMessage && whatsappMessage.trim() ? whatsappMessage.trim() : null,
+      })
+      .eq('id', id)
+      .select();
+
+    if (error) throw error;
+    return data[0];
+  },
+
+  // Update optional per-product description
+  async updateProductDescription(id, productDescription) {
+    const { data, error } = await supabase
+      .from('products')
+      .update({
+        product_description: productDescription && productDescription.trim() ? productDescription.trim() : null,
+      })
+      .eq('id', id)
+      .select();
+
+    if (error) throw error;
+    return data[0];
+  },
+
   // Delete a product (deletes both DB row and storage image)
+
   async deleteProduct(id, imageUrl) {
     // 1. Delete image from Storage
     const storagePath = getStoragePathFromUrl(imageUrl);

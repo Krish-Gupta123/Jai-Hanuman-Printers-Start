@@ -2,6 +2,8 @@ import React from 'react';
 import { ShoppingBag, Share2 } from 'lucide-react';
 
 export default function ProductCard({ product, onOrder, onShare, isLoading }) {
+  const description = (product.product_description || '').trim();
+
   return (
     <div className="w-full max-w-sm mx-auto bg-white rounded-3xl overflow-hidden shadow-xl border border-gray-100 hover:shadow-2xl transition-all duration-300 flex flex-col my-4">
       {/* Product Image Container */}
@@ -20,9 +22,15 @@ export default function ProductCard({ product, onOrder, onShare, isLoading }) {
 
       {/* Product Information & Action Area */}
       <div className="p-6 flex flex-col items-center flex-grow bg-white">
-        <h2 className="text-2xl font-bold text-gray-900 text-center mb-6 min-h-[4rem] flex items-center justify-center line-clamp-2">
+        <h2 className="text-2xl font-bold text-gray-900 text-center mb-3 min-h-[3.5rem] flex items-center justify-center line-clamp-2">
           {product.name}
         </h2>
+
+        {description ? (
+          <p className="w-full text-sm text-gray-600 text-center mt-0 mb-4 whitespace-pre-wrap">
+            {description}
+          </p>
+        ) : null}
 
         {/* Buttons Block */}
         <div className="flex w-full items-center gap-3 mt-auto">
@@ -49,3 +57,4 @@ export default function ProductCard({ product, onOrder, onShare, isLoading }) {
     </div>
   );
 }
+
