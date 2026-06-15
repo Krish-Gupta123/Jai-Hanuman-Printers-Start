@@ -258,13 +258,10 @@ export default function Admin() {
       toast.error('WhatsApp number is required');
       return;
     }
-    if (!whatsappTemplate.trim()) {
-      toast.error('Message template is required');
-      return;
-    }
 
     setSavingSettings(true);
     try {
+      // preserve existing template value when saving; admin only edits number now
       await settingsService.updateSettings(whatsappNumber.trim(), whatsappTemplate.trim());
       toast.success('WhatsApp settings saved successfully');
     } catch (error) {
@@ -632,24 +629,6 @@ export default function Admin() {
                   />
                   <p className="text-[10px] text-gray-400 mt-1.5 font-medium leading-relaxed">
                     Include country code, digits only (e.g. 91 for India, then 10-digit mobile).
-                  </p>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                    <FileText size={14} className="text-gray-400" />
-                    <span>Message Template</span>
-                  </label>
-                  <textarea
-                    rows={4}
-                    value={whatsappTemplate}
-                    onChange={(e) => setWhatsappTemplate(e.target.value)}
-                    placeholder="Message template text..."
-                    className="block w-full px-4 py-3 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-red-600/20 focus:border-red-600 text-sm text-gray-900 bg-gray-50 font-sans leading-relaxed resize-none"
-                    required
-                  />
-                  <p className="text-[10px] text-gray-400 mt-1.5 font-medium leading-relaxed">
-                    Use <code className="bg-gray-100 text-red-600 px-1 py-0.5 rounded font-mono font-bold">{'{productName}'}</code> to dynamically embed the active product name.
                   </p>
                 </div>
 

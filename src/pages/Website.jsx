@@ -146,27 +146,27 @@ export default function Website() {
       {/* Contact / CTA Block removed — CTAs are now in shared 2x2 block above footer */}
 
       {/* Shared compact 2x2 buttons (centered) placed after listing and before footer */}
-      <section className="w-full max-w-7xl mx-auto px-4 mt-6">
-        <div className="bg-white border border-gray-100 rounded-3xl py-6 px-6">
+      <section className="w-full max-w-7xl mx-auto px-4 mt-8 mb-12">
+        <div className="max-w-md mx-auto bg-white border border-gray-100 rounded-3xl py-6 px-6 shadow-sm">
           <div className="flex justify-center">
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-4">
               <a
                 href="tel:+919324595111"
-                className="flex items-center justify-center px-4 py-2 bg-white border border-gray-200 text-gray-900 rounded-xl shadow-sm text-sm"
+                className="flex items-center justify-center px-5 py-3 bg-white border border-gray-200 text-gray-900 rounded-xl shadow-sm text-sm font-medium hover:shadow-md transition"
               >
                 Contact
               </a>
 
               <a
                 href="upi://pay?pa=sarafsantosha@okaxis&pn=Hashita%20Saraf&aid=uGICAgICr7qLbNg"
-                className="flex items-center justify-center px-4 py-2 bg-gray-100 text-gray-900 rounded-xl shadow-sm text-sm"
+                className="flex items-center justify-center px-5 py-3 bg-white border border-gray-200 text-gray-900 rounded-xl shadow-sm text-sm font-medium hover:shadow-md transition"
               >
                 GPay
               </a>
 
               <button
                 onClick={() => handleShare(null)}
-                className="flex items-center justify-center px-4 py-2 bg-gray-100 text-gray-900 rounded-xl shadow-sm text-sm"
+                className="flex items-center justify-center px-5 py-3 bg-white border border-gray-200 text-gray-900 rounded-xl shadow-sm text-sm font-medium hover:shadow-md transition"
               >
                 Share
               </button>
@@ -175,7 +175,7 @@ export default function Website() {
                 href="https://jai-hanuman-printers.vercel.app/"
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center justify-center px-4 py-2 bg-gray-100 text-gray-900 rounded-xl shadow-sm text-sm"
+                className="flex items-center justify-center px-5 py-3 bg-white border border-gray-200 text-gray-900 rounded-xl shadow-sm text-sm font-medium hover:shadow-md transition"
               >
                 Website
               </a>
