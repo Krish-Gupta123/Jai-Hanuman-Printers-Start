@@ -32,6 +32,7 @@ export default function Admin() {
   // Add Product form state
   const [newProductName, setNewProductName] = useState('');
   const [newProductImage, setNewProductImage] = useState(null);
+  const [newProductDescription, setNewProductDescription] = useState('');
   const [addingProduct, setAddingProduct] = useState(false);
   const fileInputRef = useRef(null);
 
@@ -116,10 +117,11 @@ export default function Admin() {
     setAddingProduct(true);
     const uploadToast = toast.loading('Uploading product image and creating entry...');
     try {
-      await productService.addProduct(newProductName.trim(), newProductImage);
+      await productService.addProduct(newProductName.trim(), newProductImage, newProductDescription);
       toast.success('Product added successfully', { id: uploadToast });
       setNewProductName('');
       setNewProductImage(null);
+      setNewProductDescription('');
       if (fileInputRef.current) fileInputRef.current.value = '';
       fetchProducts();
     } catch (error) {
@@ -333,6 +335,18 @@ export default function Admin() {
                 </div>
               </div>
 
+              <div>
+                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
+                  Product Description (optional)
+                </label>
+                <textarea
+                  rows={3}
+                  value={newProductDescription}
+                  onChange={(e) => setNewProductDescription(e.target.value)}
+                  placeholder="Short description shown on website (optional)"
+                  className="block w-full px-3 py-2 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-red-600/20 focus:border-red-600 text-sm text-gray-900 bg-gray-50 resize-none"
+                />
+              </div>
               {/* Optional per-product description / message are intentionally editable after creation
                   because current addProduct flow only accepts name + image. */}
 

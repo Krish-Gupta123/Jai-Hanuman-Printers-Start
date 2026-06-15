@@ -21,7 +21,7 @@ export const productService = {
   },
 
   // Add a new product (handles image upload and automatically sets display_order)
-  async addProduct(name, imageFile) {
+  async addProduct(name, imageFile, productDescription = null) {
     if (!name || !imageFile) {
       throw new Error('Product name and image file are required.');
     }
@@ -66,6 +66,7 @@ export const productService = {
           name,
           image_url: publicUrl,
           display_order: nextOrder,
+          product_description: productDescription && productDescription.trim() ? productDescription.trim() : null,
         },
       ])
       .select();

@@ -96,12 +96,20 @@ export default function Website() {
       <header className="w-full bg-white border-b border-gray-100 py-6 px-4 shadow-sm">
         <div className="max-w-7xl mx-auto flex flex-col items-center justify-center">
           <div className="flex items-center gap-2 mb-1">
-            <div className="p-1.5 bg-red-600 text-white rounded-lg">
-              <Printer size={20} />
+            <div className="p-0.5 rounded-lg flex items-center justify-center">
+              <img
+                src="/images/logo.jpeg"
+                alt="Jai Hanuman Logo"
+                onError={(e) => { e.target.onerror = null; e.target.style.display = 'none'; }}
+                className="w-10 h-10 object-contain mr-2"
+              />
+              <div className="p-1.5 bg-red-600 text-white rounded-lg hidden" aria-hidden>
+                <Printer size={20} />
+              </div>
+              <h1 className="text-xl font-extrabold tracking-tight text-gray-950 uppercase">
+                Jai Hanuman Printer
+              </h1>
             </div>
-            <h1 className="text-xl font-extrabold tracking-tight text-gray-950 uppercase">
-              Jai Hanuman Printer
-            </h1>
           </div>
           <span className="h-[2px] w-12 bg-red-600 rounded-full mt-1"></span>
         </div>
