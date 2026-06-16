@@ -37,8 +37,8 @@ export const productService = {
   async addProduct(name, imageFile, productDescription = null, whatsappMessage = null) {
     if (!name || !imageFile) {
       throw new Error('Product name and image file are required.');
-
     }
+
 
     // 1. Upload image file to Supabase Storage bucket 'product-images'
     const fileExt = imageFile.name.split('.').pop();
@@ -173,19 +173,25 @@ export const productService = {
 
   // Save the updated reordered products (keep visibility as-is)
   async reorderProducts(products) {
-
-    // Only update display_order to avoid overwriting other fields like is_hidden
+    // Upsert can fail if PK/unique constraint is not set as expected.
+    // Instead, do deterministic row updates by id.
     const updates = products.map((product, index) => ({
       id: product.id,
       display_order: index,
     }));
 
+    const results = await Promise.all(
+      updates.map((u) =>
+        supabase
+          .from('products')
+          .update({ display_order: u.display_order })
+          .eq('id', u.id)
+      )
+    );
 
-    const { data, error } = await supabase
-      .from('products')
-      .upsert(updates, { onConflict: 'id' });
+    const firstError = results.find((r) => r.error);
+    if (firstError?.error) throw firstError.error;
 
-    if (error) throw error;
-    return data;
+    return true;
   },
 };

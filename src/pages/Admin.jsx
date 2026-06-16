@@ -236,11 +236,10 @@ export default function Admin() {
 
   // Reorder products (Up/Down)
   const handleMove = async (index, direction) => {
-
     if (reordering) return;
 
-
     const newProducts = [...products];
+
     const targetIndex = direction === 'up' ? index - 1 : index + 1;
 
     // Check bounds
@@ -257,7 +256,10 @@ export default function Admin() {
 
     try {
       await productService.reorderProducts(newProducts);
+      // Always refresh from DB to ensure updated display_order is reflected
+      await fetchProducts();
     } catch (error) {
+
       console.error('Error saving reorder:', error);
       toast.error('Failed to save display order');
       // Revert if API call fails
