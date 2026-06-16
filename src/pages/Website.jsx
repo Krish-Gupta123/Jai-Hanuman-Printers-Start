@@ -92,9 +92,9 @@ export default function Website() {
 
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50 text-gray-900">
+    <div className="flex flex-col bg-gray-50 text-gray-900">
       {/* Header Block */}
-      <header className="w-full bg-white border-b border-gray-100 py-6 px-4 shadow-sm">
+      <header className="w-full bg-white border-b border-gray-100 py-2 px-4 shadow-sm">
         <div className="max-w-7xl mx-auto flex flex-col items-center justify-center">
           <div className="flex items-center gap-2 mb-1">
             <div className="p-0.5 rounded-lg flex items-center justify-center">
@@ -117,7 +117,7 @@ export default function Website() {
       </header>
 
       {/* Main Container */}
-      <main className="flex-grow flex items-center justify-center py-6 px-4">
+      <main className="flex items-center justify-center py-1 px-4">
         {loading ? (
           <div className="flex flex-col items-center gap-4">
             <Loader2 className="w-10 h-10 text-red-600 animate-spin" />
@@ -146,10 +146,10 @@ export default function Website() {
       {/* Contact / CTA Block removed — CTAs are now in shared 2x2 block above footer */}
 
       {/* Shared compact 2x2 buttons (centered) placed after listing and before footer */}
-      <section className="w-full max-w-7xl mx-auto px-4 mt-8 mb-12">
-        <div className="max-w-md mx-auto bg-white border border-gray-100 rounded-3xl py-6 px-6 shadow-sm">
+      <section className="w-full max-w-7xl mx-auto px-4 mt-1 mb-2">
+        <div className="max-w-md mx-auto bg-white border border-gray-100 rounded-3xl py-3 px-4 shadow-sm">
           <div className="flex justify-center">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-2">
               <a
                 href="tel:+919324595111"
                 className="flex items-center justify-center px-5 py-3 bg-white border border-gray-200 text-gray-900 rounded-xl shadow-sm text-sm font-medium hover:shadow-md transition"
@@ -185,7 +185,7 @@ export default function Website() {
       </section>
 
       {/* Footer Block */}
-      <footer className="w-full bg-white border-t border-gray-100 py-6 px-4 text-center">
+      <footer className="w-full bg-white border-t border-gray-100 py-3 px-4 text-center">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="text-xs text-gray-400 font-medium">
             © {new Date().getFullYear()} Jai Hanuman Printer. All rights reserved.

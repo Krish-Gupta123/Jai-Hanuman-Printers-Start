@@ -26,7 +26,7 @@ export default function ProductSlider({ products, onOrder, onShare, isLoading })
   }
 
   return (
-    <div className="w-full max-w-md mx-auto px-4 py-6 relative">
+    <div className="w-full max-w-md mx-auto px-4 py-0 relative">
       {/* Custom Navigation Buttons OUTSIDE card/image area */}
       <button
         type="button"
@@ -77,7 +77,7 @@ export default function ProductSlider({ products, onOrder, onShare, isLoading })
 
 
         {products.map((product) => (
-          <SwiperSlide key={product.id} className="pt-2 pb-6">
+          <SwiperSlide key={product.id} className="pt-0 pb-6">
             <ProductCard
               product={product}
               onOrder={onOrder}
