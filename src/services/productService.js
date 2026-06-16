@@ -8,8 +8,21 @@ const getStoragePathFromUrl = (url) => {
 };
 
 export const productService = {
-  // Fetch all products ordered by display_order ascending
+  // Website (public) products only: ordered by display_order
   async getProducts() {
+    const { data, error } = await supabase
+      .from('products')
+      .select('*')
+      .eq('is_hidden', false)
+      .order('display_order', { ascending: true })
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    return data || [];
+  },
+
+  // Admin: all products (hidden + visible)
+  async getAdminProducts() {
     const { data, error } = await supabase
       .from('products')
       .select('*')
@@ -24,6 +37,7 @@ export const productService = {
   async addProduct(name, imageFile, productDescription = null, whatsappMessage = null) {
     if (!name || !imageFile) {
       throw new Error('Product name and image file are required.');
+
     }
 
     // 1. Upload image file to Supabase Storage bucket 'product-images'
@@ -145,15 +159,27 @@ export const productService = {
     return true;
   },
 
-  // Save the updated reordered products
+  // Toggle product visibility (admin)
+  async toggleProductVisibility(id, isHidden) {
+    const { data, error } = await supabase
+      .from('products')
+      .update({ is_hidden: !!isHidden })
+      .eq('id', id)
+      .select();
+
+    if (error) throw error;
+    return data && data[0];
+  },
+
+  // Save the updated reordered products (keep visibility as-is)
   async reorderProducts(products) {
-    // Create payload with only id and display_order
+
+    // Only update display_order to avoid overwriting other fields like is_hidden
     const updates = products.map((product, index) => ({
       id: product.id,
-      name: product.name,
-      image_url: product.image_url,
       display_order: index,
     }));
+
 
     const { data, error } = await supabase
       .from('products')

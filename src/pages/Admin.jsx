@@ -19,7 +19,9 @@ import {
   FileText,
   Phone,
   Link,
-  MessageSquare
+  MessageSquare,
+  Eye,
+  EyeOff
 } from 'lucide-react';
 
 import toast from 'react-hot-toast';
@@ -69,9 +71,10 @@ export default function Admin() {
   const fetchProducts = async () => {
     setLoadingProducts(true);
     try {
-      const data = await productService.getProducts();
+      const data = await productService.getAdminProducts();
       setProducts(data);
     } catch (error) {
+
       console.error('Error loading products:', error);
       toast.error('Failed to load products');
     } finally {
@@ -219,8 +222,21 @@ export default function Admin() {
   };
 
 
+  const handleToggleVisibility = async (product) => {
+    try {
+      const nextHidden = !product.is_hidden;
+      await productService.toggleProductVisibility(product.id, nextHidden);
+      toast.success(nextHidden ? 'Product hidden' : 'Product unhidden');
+      fetchProducts();
+    } catch (error) {
+      console.error('Error toggling product visibility:', error);
+      toast.error('Failed to update visibility');
+    }
+  };
+
   // Reorder products (Up/Down)
   const handleMove = async (index, direction) => {
+
     if (reordering) return;
 
 
@@ -565,8 +581,19 @@ export default function Admin() {
                       )}
 
 
+                      {/* Visibility toggle (eye) */}
+                      <button
+
+                        onClick={() => handleToggleVisibility(product)}
+                        className={`p-2 rounded-xl transition-all cursor-pointer ${product.is_hidden ? 'text-gray-500 hover:text-gray-900 hover:bg-gray-100' : 'text-red-600 hover:text-red-700 hover:bg-red-50'}`}
+                        title={product.is_hidden ? 'Unhide Product' : 'Hide Product'}
+                      >
+                        {product.is_hidden ? <EyeOff size={16} /> : <Eye size={16} />}
+                      </button>
+
                       {/* Deep link copy button */}
                       <button
+
                         onClick={async () => {
                           const deepLink = `${window.location.origin}/?product=${product.id}`;
                           await navigator.clipboard.writeText(deepLink);
